@@ -2,345 +2,266 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add Monthly Budget</title>
+<meta charset="UTF-8">
+<title>Budget</title>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        background: #eef2f7;
+        min-height: 100vh;
+    }
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    .page-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0;
+        background: transparent;
+    }
 
-    <style>
-      
-        :root {
-            --primary: #007BFF;
-            --primary-hover: #0056B3;
-            --bg-light: #F4F6F8;
-            --card-bg: #FFFFFF;
-            --text-primary: #333333;
-            --text-secondary: #555555;
-            --border-light: #E0E4E8;
-            --warning: #FFC107;
-        }
+    .page-title {
+        text-align: center;
+        font-size: 26px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 6px;
+    }
 
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+    .page-subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 32px;
+        font-size: 14px;
+    }
 
-        body {
-            background: var(--bg-light);
-            min-height: 100vh;
-            padding: 40px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    /* === BUDGET CARD === */
+    .budget-card {
+        max-width: 520px;             
+        margin: 0 auto 40px;          
+        padding: 42px 38px 46px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 25px 55px rgba(0,0,0,0.14);
+    }
 
-        /* ===== Budget Card ===== */
-        .budget-card {
-            background: var(--card-bg);
-            width: 420px;
-            padding: 32px;
-            border-radius: 16px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-        }
+    .budget-form {
+        width: 100%;
+    }
 
-        .budget-card h2 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 6px;
-        }
+    .form-group {
+        margin-bottom: 20px;
+    }
 
-        .budget-card p {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 26px;
-        }
+    .field-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 6px;
+    }
 
-        .form-group {
-            margin-bottom: 18px;
-        }
+    .field-label i {
+        color: #3b82f6;
+        font-size: 14px;
+    }
 
-        .form-group label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-            display: block;
-        }
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        height: 46px;
+        padding: 0 14px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-size: 14px;
+        color: #334155;
+        background-color: #ffffff;
+        box-sizing: border-box;
+    }
 
-        .form-group i {
-            color: var(--primary);
-            margin-right: 6px;
-        }
+    .form-group select {
+        appearance: none;
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 14px;
+        padding-right: 42px;
+    }
 
-        .form-group select,
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid var(--border-light);
-            font-size: 14px;
-            outline: none;
-            background-color: #fff;
-            transition:
-                border-color 0.25s ease,
-                box-shadow 0.25s ease,
-                background-color 0.25s ease,
-                transform 0.15s ease;
-        }
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+        outline: none;
+    }
 
-        .form-group select:hover,
-        .form-group input:hover {
-            background-color: rgba(0, 123, 255, 0.05);
-        }
+    .save-btn {
+        width: 100%;
+        height: 46px;
+        border-radius: 10px;
+        border: none;
+        background: linear-gradient(135deg, #0d6efd, #003d99);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 8px;
+    }
 
-        .form-group select:focus,
-        .form-group input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
-            transform: translateY(-1px);
-        }
+    /* TABLE */
+    .table-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        background: #ffffff;
+    }
 
-        .enhanced-select {
-            position: relative;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        .enhanced-select .dropdown {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            width: 100%;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(-8px);
-            pointer-events: none;
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            z-index: 20;
-        }
+    thead {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    }
 
-        .enhanced-select.open .dropdown {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
+    thead th {
+        color: white;
+        padding: 14px;
+        text-align: center;
+        font-size: 14px;
+    }
 
-        .enhanced-select .option {
-            padding: 11px 12px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
+    tbody td {
+        padding: 14px;
+        text-align: center;
+        border-bottom: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 14px;
+    }
 
-        .enhanced-select .option:hover {
-            background-color: rgba(0,123,255,0.12);
-            color: var(--primary);
-        }
+    tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
 
-        /* ===== Save Button ===== */
-        .save-btn {
-            width: 100%;
-            padding: 13px;
-            border-radius: 10px;
-            border: none;
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .save-btn:hover {
-            opacity: 0.95;
-        }
-
-        /* ===== Existing Budget ===== */
-        .existing-budget {
-            width: 90%;
-            max-width: 900px;
-            margin-top: 40px;
-            background: var(--card-bg);
-            padding: 22px;
-            border-radius: 14px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-        }
-
-        .existing-budget h3 {
-            font-size: 16px;
-            margin-bottom: 14px;
-            color: var(--primary);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            overflow: hidden;
-            border-radius: 10px;
-        }
-
-        table th {
-            background: rgba(0,123,255,0.12);
-            color: var(--text-primary);
-            padding: 12px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        table td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-light);
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .no-budget {
-            text-align: center;
-            color: var(--text-secondary);
-            padding: 16px;
-        }
-    </style>
+    .no-budget {
+        color: #64748b;
+        font-weight: 500;
+        padding: 18px;
+    }
+</style>
 </head>
 
 <body>
 
 <jsp:include page="navbar.jsp" />
 
-<!-- ===== Add Monthly Budget ===== -->
-<div class="budget-card">
-    <h2>Add Monthly Budget</h2>
-    <p>Track and control your spending goals</p>
+<%
+java.util.List<com.pfm.entity.Category> ctgs = (java.util.List<com.pfm.entity.Category>) request.getAttribute("categories");
+%>
 
-    <form action="saveBudget" method="post">
+<div class="page-container">
 
-        <div class="form-group">
-            <label><i class="fa-solid fa-calendar"></i> Month</label>
-            <select name="month" required>
-                <option value="">Select Month</option>
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-            </select>
-        </div>
+    <div class="budget-card">
+        <div class="page-title">Add Monthly Budget</div>
+        <div class="page-subtitle">Track and control your spending goals</div>
 
-        <div class="form-group">
-            <label><i class="fa-solid fa-calendar-days"></i> Year</label>
-            <select name="year" required>
-                <option value="">Select Year</option>
-                <option>2024</option>
-                <option>2025</option>
-                <option>2026</option>
-            </select>
-        </div>
+        <form class="budget-form" action="saveBudget" method="post">
 
-        <div class="form-group">
-            <label><i class="fa-solid fa-tags"></i> Category</label>
-            <select name="categoryId" required>
-                <option value="">Select Category</option>
-                <option value="1">Food</option>
-                <option value="2">Rent</option>
-                <option value="3">Shopping</option>
-                <option value="4">Movie</option>
-                <option value="5">Salary</option>
-                <option value="6">Travel</option>
-                <option value="7">EMI</option>
-                <option value="8">Mobile Recharge</option>
-                <option value="9">Bills</option>
-                <option value="10">Other Expense</option>
-                <option value="11">Other Income</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <div class="field-label">
+                    <i class="fa-solid fa-calendar"></i>
+                    <span>Month</span>
+                </div>
+                <select name="month" required>
+                    <option value="">Select Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label><i class="fa-solid fa-indian-rupee-sign"></i> Amount</label>
-            <input type="number" name="amount" placeholder="Enter amount" required>
-        </div>
+            <div class="form-group">
+                <div class="field-label">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Year</span>
+                </div>
+                <select name="year" required>
+                    <option value="">Select Year</option>
+                    <option>2024</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                </select>
+            </div>
 
-        <button class="save-btn">Save Budget</button>
-    </form>
+            <div class="form-group">
+                <div class="field-label">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>Category</span>
+                </div>
+                <select name="catId" required>
+                    <option value="">Select Category</option>
+                    <%
+                    if (ctgs != null && !ctgs.isEmpty()) {
+                        for (com.pfm.entity.Category c : ctgs) {
+                    %>
+                        <option value="<%=c.getId()%>"><%=c.getName()%></option>
+                    <%
+                        }
+                    } else {
+                    %>
+                        <option disabled>No Categories Found</option>
+                    <%
+                    }
+                    %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div class="field-label">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    <span>Amount</span>
+                </div>
+                <input type="number" name="amount" placeholder="Enter Amount" required>
+            </div>
+
+            <button class="save-btn">Save Budget</button>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" class="no-budget">Budgets Do Not Exist</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </div>
-
-<!-- ===== Existing Budget ===== -->
-<div class="existing-budget">
-    <h3>Existing Budget</h3>
-
-    <table>
-        <thead>
-        <tr>
-            <th>Month</th>
-            <th>Year</th>
-            <th>Category</th>
-            <th>Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td colspan="4" class="no-budget">Budgets Does Not Exists</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
-<!-- ===== JS ===== -->
-<script>
-document.querySelectorAll('.form-group select').forEach(select => {
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'enhanced-select';
-
-    const dropdown = document.createElement('div');
-    dropdown.className = 'dropdown';
-
-    [...select.options].forEach(opt => {
-        if (!opt.value) return;
-
-        const div = document.createElement('div');
-        div.className = 'option';
-        div.textContent = opt.textContent;
-
-        div.addEventListener('click', () => {
-            select.value = opt.value;
-            wrapper.classList.remove('open');
-        });
-
-        dropdown.appendChild(div);
-    });
-
-    select.parentNode.insertBefore(wrapper, select);
-    wrapper.appendChild(select);
-    wrapper.appendChild(dropdown);
-
-    select.addEventListener('mousedown', e => {
-        e.preventDefault();
-        wrapper.classList.toggle('open');
-    });
-
-    document.addEventListener('click', e => {
-        if (!wrapper.contains(e.target)) {
-            wrapper.classList.remove('open');
-        }
-    });
-});
-</script>
 
 </body>
 </html>
