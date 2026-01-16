@@ -205,6 +205,209 @@
         font-weight: 600;
         padding: 20px;
     }
+    
+    /* ===== ENHANCED SELECT (GLOBAL – TRANSACTIONS) ===== */
+.enhanced-select {
+    position: relative;
+    width: 100%;
+}
+
+.enhanced-select select {
+    appearance: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Dropdown panel */
+.enhanced-select .dropdown {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    max-height: 220px;           /* ~5 options */
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 100;
+    overscroll-behavior: contain; /* prevents page scroll */
+}
+
+.enhanced-select.open .dropdown {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.enhanced-select .option {
+    padding: 11px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.enhanced-select .option:hover {
+    background: rgba(37,99,235,0.12);
+}
+
+/* Scrollbar */
+.enhanced-select .dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+.enhanced-select .dropdown::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 10px;
+}
+    
+    /* ===== FIX FILTER SELECT ALIGNMENT ===== */
+.filter-group > .enhanced-select {
+    width: 100%;
+}
+
+.filter-group > .enhanced-select > select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.filter-group input {
+    box-sizing: border-box;
+}
+    
+/* ===== ACTION BUTTONS (EDIT / DELETE) ===== */
+.action-cell {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    border: none;              
+    outline: none;
+    background: transparent;   
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.25s ease;
+}
+
+
+/* Edit Button */
+.edit-btn {
+    background: #e0e7ff;
+    color: #1e3a8a;
+}
+
+.edit-btn:hover {
+    background: #c7d2fe;
+    transform: translateY(-1px);
+}
+
+/* Delete Button */
+.delete-btn {
+    background: #ffe4e6;   
+    color: #9f1239;
+}
+
+.delete-btn:hover {
+    background: #fecdd3;
+    transform: translateY(-1px);
+}
+
+
+/* ===== DELETE MODAL ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-box {
+    background: #ffffff;
+    width: 360px;
+    padding: 26px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    animation: scaleIn 0.25s ease;
+}
+
+.modal-box h3 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: #1e293b;
+}
+
+.modal-box p {
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 22px;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-btn {
+    flex: 1;
+    height: 42px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+/* Buttons */
+.cancel-btn {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.cancel-btn:hover {
+    background: #d1d5db;
+}
+
+.confirm-btn {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-btn:hover {
+    opacity: 0.95;
+}
+
+/* Animation */
+@keyframes scaleIn {
+    from {
+        transform: scale(0.92);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
 </style>
 </head>
 
@@ -215,13 +418,17 @@
 <%
 java.util.List<com.pfm.entity.Category> ctgs =
     (java.util.List<com.pfm.entity.Category>) request.getAttribute("categories");
+
+ java.util.List<com.pfm.entity.Transaction> txns = 
+		 (java.util.List<com.pfm.entity.Transaction>) request.getAttribute("txns");
+
 %>
 
 <div class="page-container">
     <div class="content-grid">
 
         <!-- FILTERS -->
-        <form class="filters-card" action="filterTransactions" method="get">
+        <form class="filters-card" action="filter-transactions" method="post">
 
             <h3>Filters</h3>
 
@@ -241,7 +448,7 @@ java.util.List<com.pfm.entity.Category> ctgs =
                     <i class="fa-solid fa-tags"></i>
                     <span>Category</span>
                 </div>
-                <select name="catId" required>
+                <select name="catId">
                     <option value="">Select Category</option>
                     <%
                     if (ctgs != null && !ctgs.isEmpty()) {
@@ -296,9 +503,50 @@ java.util.List<com.pfm.entity.Category> ctgs =
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td colspan="6" class="no-data">No Transactions Found</td>
-                    </tr>
+                    <%
+                    	if(txns!=null && !txns.isEmpty())
+                    	{
+                    		for(com.pfm.entity.Transaction txn : txns)
+                    		{
+                    %>		
+                    			 <tr>
+                        				<td><%=txn.getDate() %></td>
+                        				<td><%=txn.getDescription()%></td>
+                        				<td><%=txn.getCategory().getName()%></td>
+                        				<td><%=txn.getType()%></td>
+                        				<td><%=txn.getAmount()%></td>
+										
+									<!--	<td class="action-cell">
+										    <a class="action-btn edit-btn" href="/edit?tid=<%= txn.getId()%>">Edit</a>
+										    <a class="action-btn delete-btn" href="/delete?tid=<%= txn.getId()%>"
+										       onclick="return confirm('Are you sure you want to delete this transaction?');">
+										       Delete
+										    </a>
+										</td>
+									-->
+									<td class="action-cell">
+									    <a class="action-btn edit-btn" href="/edit?tid=<%= txn.getId()%>">Edit</a>
+
+									    <button 
+									        type="button"
+									        class="action-btn delete-btn"
+									        onclick="openDeleteModal(<%= txn.getId() %>)">
+									        Delete
+									    </button>
+									</td>
+
+										
+                    			</tr>
+                    <%
+                    		}
+                    	}else{
+                    %>
+                   				<tr>
+                        				<td colspan="6" class="no-data">No Transactions Found</td>
+                    			</tr>
+                    <%
+                    	}
+                    %>
                 </tbody>
             </table>
         </div>
@@ -306,5 +554,130 @@ java.util.List<com.pfm.entity.Category> ctgs =
     </div>
 </div>
 
+<!-- DELETE CONFIRM MODAL -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Delete Transaction</h3>
+        <p>Are you sure you want to delete this transaction?<br>This action cannot be undone.</p>
+
+        <div class="modal-actions">
+            <button class="modal-btn cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+            <a id="confirmDeleteBtn" class="modal-btn confirm-btn">Delete</a>
+        </div>
+    </div>
+</div>
+
+
 </body>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    document.querySelectorAll(".filter-group select").forEach(select => {
+
+        // Prevent double enhancement
+        if (select.dataset.enhanced === "true") return;
+        select.dataset.enhanced = "true";
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "enhanced-select";
+
+        const dropdown = document.createElement("div");
+        dropdown.className = "dropdown";
+
+        // Build options
+        Array.from(select.options).forEach(option => {
+            if (!option.value) return;
+
+            const div = document.createElement("div");
+            div.className = "option";
+            div.textContent = option.textContent;
+
+            div.addEventListener("click", () => {
+                select.value = option.value;
+                select.dispatchEvent(new Event("change", { bubbles: true }));
+                wrapper.classList.remove("open");
+            });
+
+            dropdown.appendChild(div);
+        });
+
+        // Prevent page scroll while scrolling dropdown
+        dropdown.addEventListener("wheel", e => {
+            e.stopPropagation();
+        });
+
+        // Wrap select
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+        wrapper.appendChild(dropdown);
+
+        // Toggle dropdown
+        select.addEventListener("mousedown", e => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Close other dropdowns
+            document.querySelectorAll(".enhanced-select.open")
+                .forEach(el => el !== wrapper && el.classList.remove("open"));
+
+            // Auto direction (up/down)
+            dropdown.style.top = "";
+            dropdown.style.bottom = "";
+
+            const rect = wrapper.getBoundingClientRect();
+            const dropdownHeight = dropdown.scrollHeight;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+
+            if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+                dropdown.style.bottom = "calc(100% + 6px)";
+            } else {
+                dropdown.style.top = "calc(100% + 6px)";
+            }
+
+            wrapper.classList.toggle("open");
+        });
+
+        // Close on outside click
+        document.addEventListener("click", e => {
+            if (!wrapper.contains(e.target)) {
+                wrapper.classList.remove("open");
+            }
+        });
+
+        // Close on ESC
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") {
+                wrapper.classList.remove("open");
+            }
+        });
+
+    });
+
+});
+
+//
+function openDeleteModal(tid) {
+    const modal = document.getElementById("deleteModal");
+    const confirmBtn = document.getElementById("confirmDeleteBtn");
+
+    confirmBtn.href = "/delete?tid=" + tid;
+    modal.style.display = "flex";
+}
+
+function closeDeleteModal() {
+    document.getElementById("deleteModal").style.display = "none";
+}
+
+/* Close modal on background click */
+document.getElementById("deleteModal").addEventListener("click", e => {
+    if (e.target.id === "deleteModal") {
+        closeDeleteModal();
+    }
+});
+
+</script>
+
+
 </html>
