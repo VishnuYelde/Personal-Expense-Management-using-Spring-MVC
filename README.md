@@ -1,4 +1,4 @@
-# 💰 Personal Expense Management System (PFM)
+# 💰 Personal Finance Management (PFM)
 
 A **modern, production-ready Personal Expense Management web application** built using **Spring Boot (MVC)** and **PostgreSQL**. This project helps users track income, expenses, categories, and view financial summaries with a clean layered architecture.
 
@@ -229,6 +229,7 @@ cp src/main/resources/application-example.properties \
 ```
 
 Update DB credentials inside the file.
+Open in Spring Tool Suite 4 or in the Eclipse IDE
 
 ### 3️⃣ Run the App
 
