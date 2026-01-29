@@ -18,11 +18,14 @@ A **modern, production-ready Personal Expense Management web application** built
 - User-based expense & income tracking
 - Expense categorization (master data)
 - Monthly & yearly summaries
-- PostgreSQL persistence
+- Analytics dashboard (charts)
+- Export reports (PDF / Excel
+- Email verification & notifications
+- Refresh token rotation
 - Clean MVC + Service + Repository architecture
 - JPA Specifications for dynamic queries
 - JSP-based UI (Spring MVC)
-- Cloud & Railway deployment ready
+- PostgreSQL persistence
 
 ---
 
@@ -254,13 +257,10 @@ java -jar target/PFM-*.jar
 
 ## 🔮 Future Enhancements
 
-- Email verification & notifications
-- Refresh token rotation
 - Account lockout & audit logs
 - REST API version
+- Cloud & Railway deployment ready
 - React / Angular frontend
-- Analytics dashboard (charts)
-- Export reports (PDF / Excel)
 - Docker & CI/CD pipeline
 
 ---
