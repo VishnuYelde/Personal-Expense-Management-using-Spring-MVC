@@ -28,6 +28,8 @@ build/
 # ===============================
 /src/main/resources/application.properties
 /src/main/resources/category.sql
+/src/main/resources/data.sql
+
 
 # Environment variables
 .env
